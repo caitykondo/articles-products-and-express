@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/products', products);
-
+app.use('/articles', articles);
 
 
 

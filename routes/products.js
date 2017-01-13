@@ -5,6 +5,4 @@ router.get('/', (req, res) => {
   res.send('sanity check');
 });
 
-console.log('products working');
-
 module.exports = router;
