@@ -4,6 +4,13 @@ const app = express();
 let articles = require('./routes/articles');
 let products = require('./routes/products');
 
+app.get('/', (req, res) => {
+  res.send('hello');
+});
+
+app.use('/products', products);
+
+
 
 
 module.exports = app;
