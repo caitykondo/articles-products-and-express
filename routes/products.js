@@ -91,10 +91,9 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
-  console.log(requestId);
-  console.log(data);
-
-  res.render('./products/product', data);
+  let productRequested = findProductById(requestId);
+  let i = productList.indexOf(productRequested);
+  res.render('./products/product', data.products[i]);
 });
 
 
