@@ -4,39 +4,12 @@ let router = express.Router();
 
 let productList = productsDB.productList;
 
-let data = {
-  "products": productList
-};
-
-function addNewProduct(product) {
-  product.id = productsDB.newProductId;
-  productsDB.newProductId++;
-  productList.push(product);
-
-}
-
-function findProductById(requestId){
-  for(let i = 0; i < productList.length; i++){
-    if(productList[i].id === requestId){
-       return productList[i];
-    }
-  }
-}
-
-function deleteProduct(requestId){
-  for(let i = 0; i < productList.length; i++){
-    if(productList[i].id === requestId){
-      productList.splice(i, 1);
-    }
-  }
-}
-
 
 router.post('/', (req, res) => {
   let productObj = req.body;
 
   if(productObj.name && productObj.price && productObj.inventory){
-    addNewProduct(productObj);
+    productsDB.addNewProduct(productObj);
     // If successful then redirect the user back to the /products route.
     // res.redirect('/products/');
 
@@ -53,7 +26,7 @@ router.put('/:id', (req, res) => {
 
   let requestId = parseInt(req.params.id);
 
-  let productToEdit = findProductById(requestId);
+  let productToEdit = productsDB.findProductById(requestId);
 
   // check if has name
   if(req.body.name){
@@ -80,20 +53,20 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
-  deleteProduct(requestId);
+  productsDB.deleteProduct(requestId);
   res.send(productList);
 });
 
 
 router.get('/', (req, res) => {
-  res.render('./products/index', data);
+  res.render('./products/index', productsDB.data);
 });
 
 router.get('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
-  let productRequested = findProductById(requestId);
+  let productRequested = productsDB.findProductById(requestId);
   let i = productList.indexOf(productRequested);
-  res.render('./products/product', data.products[i]);
+  res.render('./products/product', productsDB.data.products[i]);
 });
 
 
