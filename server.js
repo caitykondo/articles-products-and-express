@@ -14,10 +14,6 @@ app.set('view engine', 'hbs');
 let articles = require('./routes/articles');
 let products = require('./routes/products');
 
-// let data = {
-//   "products": products.productList
-// };
-
 app.use(express.static('./'));
 
 app.use(bodyParser.urlencoded({extended: false}));

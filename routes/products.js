@@ -4,17 +4,23 @@ let router = express.Router();
 
 let productList = productsDB.productList;
 
-let newProductId = 1;
+let data = {
+  "products": productList
+};
+
+function createNewProduct(product) {
+  product.id = productsDB.newProductId;
+  productsDB.newProductId++;
+  productList.push(product);
+}
+
+
 
 router.post('/', (req, res) => {
   let productObj = req.body;
 
   if(productObj.name && productObj.price && productObj.inventory){
-    productObj.id = newProductId;
-
-    newProductId++;
-
-    productList.push(productObj);
+    createNewProduct(productObj);
     // If successful then redirect the user back to the /products route.
     // res.redirect('/products/');
 
@@ -81,10 +87,6 @@ router.delete('/:id', (req, res) => {
   res.send(productList);
 
 });
-
-let data = {
-  "products": productList
-};
 
 router.get('/', (req, res) => {
   res.render('./products/index', data);
