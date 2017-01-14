@@ -12,8 +12,21 @@ function createNewProduct(product) {
   product.id = productsDB.newProductId;
   productsDB.newProductId++;
   productList.push(product);
+
 }
 
+let productMatch = '';
+
+function findProductById(requestId){
+  for(let i = 0; i < productList.length; i++){
+    if(productList[i].id === requestId){
+      productMatch = i;
+      return true;
+    }else{
+      return false;
+    }
+  }
+}
 
 
 router.post('/', (req, res) => {
@@ -37,37 +50,32 @@ router.put('/:id', (req, res) => {
 
   let requestId = parseInt(req.params.id);
 
-
   // find the product by requestId
-  for(let i = 0; i < productList.length; i++){
-    if(productList[i].id === requestId){
-
-      // set this products value to new value
+    if(findProductById(requestId)){
 
       // check if has name
       if(req.body.name){
-        productList[i].name = req.body.name;
+        productList[productMatch].name = req.body.name;
       }
       // check if has price
       if(req.body.price){
-        productList[i].price = req.body.price;
+        productList[productMatch].price = req.body.price;
       }
       // check if has inventory
       if(req.body.inventory){
-        productList[i].inventory = req.body.inventory;
+        productList[productMatch].inventory = req.body.inventory;
       }
 
     //  If successful then redirect the user back to the /products/:id route
     // where :id is the product that was just edited, so that they can see the updated resource.
-      res.redirect(303, '/products/:id');
+      // res.redirect(303, '/products/:id');
 
     //  If not successful then send the user back to the new article route,
     // /products/:id/edit and some way to communicate the error back to the user via templating.
       // res.redirect('/products/:id');
-    }
-    else{
-      res.send('NOT OKAY');
-    }
+  }
+  else{
+    res.send('NOT OKAY');
   }
   res.send('OKAY');
 
