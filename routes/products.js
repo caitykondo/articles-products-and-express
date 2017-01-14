@@ -53,11 +53,14 @@ router.put('/:id', (req, res) => {
 
     //  If successful then redirect the user back to the /products/:id route
     // where :id is the product that was just edited, so that they can see the updated resource.
-      res.redirect('/products/:id');
+      res.redirect(303, '/products/:id');
 
     //  If not successful then send the user back to the new article route,
     // /products/:id/edit and some way to communicate the error back to the user via templating.
       // res.redirect('/products/:id');
+    }
+    else{
+      res.send('NOT OKAY');
     }
   }
   res.send('OKAY');
@@ -77,6 +80,14 @@ router.delete('/:id', (req, res) => {
   }
   res.send(productList);
 
+});
+
+let data = {
+  "products": productList
+};
+
+router.get('/', (req, res) => {
+  res.render('./products/index', data);
 });
 
 

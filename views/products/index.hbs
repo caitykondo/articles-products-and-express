@@ -1,0 +1,10 @@
+<h1>Hello World</h1>
+
+{{#each products}} {{!-- iterates over the array of books --}}
+  <div class="product">
+    <h1>{{name}}</h1>
+    <h2>{{id}}</h2>
+    <h2>${{price}}</h2>
+    <h2>inventory: {{inventory}}</h2>
+  </div>
+{{/each}}
