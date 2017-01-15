@@ -24,6 +24,20 @@ function deleteProduct(requestId){
   }
 }
 
+function editProduct(productToEdit, req) {
+  if(req.body.name){
+      productToEdit.name = req.body.name;
+    }
+    // check if has price
+    if(req.body.price){
+      productToEdit.price = req.body.price;
+    }
+    // check if has inventory
+    if(req.body.inventory){
+      productToEdit.inventory = req.body.inventory;
+    }
+}
+
 
 module.exports = {
   data: {
@@ -34,4 +48,5 @@ module.exports = {
   addNewProduct,
   findProductById,
   deleteProduct,
+  editProduct
 };

@@ -10,10 +10,7 @@ router.post('/', (req, res) => {
 
   if(productObj.name && productObj.price && productObj.inventory){
     productsDB.addNewProduct(productObj);
-    // If successful then redirect the user back to the /products route.
-    // res.redirect('/products/');
-
-    res.send(productList);
+    res.redirect('/products');
   }else{
     // If not successful then send the user back to the new article route,
     // /products/new and some way to communicate the error back to the user via templating.
@@ -27,28 +24,17 @@ router.put('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
 
   let productToEdit = productsDB.findProductById(requestId);
-
-  // check if has name
-  if(req.body.name){
-    productToEdit.name = req.body.name;
+  if(productToEdit !== undefined){
+    productsDB.editProduct(productToEdit, req);
+    res.redirect(303, `/products/${productToEdit.id}`);
   }
-  // check if has price
-  if(req.body.price){
-    productToEdit.price = req.body.price;
+  else {
+    res.redirect(303, '/products/-1');
   }
-  // check if has inventory
-  if(req.body.inventory){
-    productToEdit.inventory = req.body.inventory;
-  }
-
-    //  If successful then redirect the user back to the /products/:id route
-    // where :id is the product that was just edited, so that they can see the updated resource.
-      // res.redirect(303, '/products/:id');
-
     //  If not successful then send the user back to the new article route,
     // /products/:id/edit and some way to communicate the error back to the user via templating.
       // res.redirect('/products/:id');
-  res.end();
+  // res.send('done');
 });
 
 router.delete('/:id', (req, res) => {
@@ -69,5 +55,11 @@ router.get('/:id', (req, res) => {
   res.render('./products/product', productsDB.data.products[i]);
 });
 
+router.get('/:id/edit', (req, res) => {
+  let requestId = parseInt(req.params.id);
+  let productRequested = productsDB.findProductById(requestId);
+  let i = productList.indexOf(productRequested);
+  res.render('./products/edit', productsDB.data.products[i]);
+});
 
 module.exports = router;
