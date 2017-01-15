@@ -1,8 +1,8 @@
 const express = require('express');
 const productsDB = require('../db/products');
 let router = express.Router();
-
 let productList = productsDB.productList;
+
 
 
 router.post('/', (req, res) => {
@@ -10,12 +10,11 @@ router.post('/', (req, res) => {
 
   if(productObj.name && productObj.price && productObj.inventory){
     productsDB.addNewProduct(productObj);
+    productsDB.data.error = false;
     res.redirect('/products');
   }else{
-    // If not successful then send the user back to the new article route,
-    // /products/new and some way to communicate the error back to the user via templating.
-    res.send('ERROR');
-    // res.redirect('/products/new');
+    productsDB.data.error = true;
+    res.redirect('/products/new');
   }
 });
 
@@ -29,7 +28,7 @@ router.put('/:id', (req, res) => {
     res.redirect(303, `/products/${productToEdit.id}`);
   }
   else {
-    res.redirect(303, '/products/-1');
+    res.redirect(303, '/products/new');
   }
     //  If not successful then send the user back to the new article route,
     // /products/:id/edit and some way to communicate the error back to the user via templating.
@@ -49,14 +48,19 @@ router.get('/', (req, res) => {
 });
 
 router.get('/new', (req, res) => {
-  res.render('./products/new');
+
+  res.render('./products/new', productsDB.data);
 });
 
 router.get('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
   let productRequested = productsDB.findProductById(requestId);
-  let i = productList.indexOf(productRequested);
-  res.render('./products/product', productsDB.data.products[i]);
+  if(productRequested){
+    let i = productList.indexOf(productRequested);
+    res.render('./products/product', productsDB.data.products[i]);
+  }else{
+    res.redirect(303, '/products/error');
+  }
 });
 
 // router.post('/:id', (req, res) => {
@@ -72,8 +76,12 @@ router.get('/:id', (req, res) => {
 router.get('/:id/edit', (req, res) => {
   let requestId = parseInt(req.params.id);
   let productRequested = productsDB.findProductById(requestId);
-  let i = productList.indexOf(productRequested);
-  res.render('./products/edit', productsDB.data.products[i]);
+  if(productRequested){
+    let i = productList.indexOf(productRequested);
+    res.render('./products/edit', productsDB.data.products[i]);
+  }else{
+    res.redirect(303, '/products/error');
+  }
 });
 
 

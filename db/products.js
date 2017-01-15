@@ -38,15 +38,15 @@ function editProduct(productToEdit, req) {
     }
 }
 
-
 module.exports = {
   data: {
-  "products": productList
+    "products": productList,
+    "error": false
   },
   productList,
   newProductId,
   addNewProduct,
   findProductById,
   deleteProduct,
-  editProduct
+  editProduct,
 };
