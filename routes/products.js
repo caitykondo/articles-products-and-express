@@ -6,6 +6,7 @@ let productList = productsDB.productList;
 
 
 router.post('/', (req, res) => {
+  console.log(req.body);
   let productObj = req.body;
 
   if(productObj.name && productObj.price && productObj.inventory){
@@ -46,6 +47,10 @@ router.delete('/:id', (req, res) => {
 
 router.get('/', (req, res) => {
   res.render('./products/index', productsDB.data);
+});
+
+router.get('/new', (req, res) => {
+  res.render('./products/new');
 });
 
 router.get('/:id', (req, res) => {
