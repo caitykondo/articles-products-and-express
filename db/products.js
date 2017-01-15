@@ -41,7 +41,10 @@ function editProduct(productToEdit, req) {
 module.exports = {
   data: {
     "products": productList,
-    "error": false
+    success: {
+      "delete": false,
+      "post": true
+    }
   },
   productList,
   newProductId,

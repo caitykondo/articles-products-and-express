@@ -11,6 +11,6 @@
 
   <input id= "newProduct" type="submit" value="Add Product">
 </form>
-{{#if error}}
-<p>Please fill out all missing fields</p>
-{{/if}}
+{{#unless success.post}}
+<p>Please fill out the missing fields</p>
+{{/unless}}
