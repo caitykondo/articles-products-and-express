@@ -6,7 +6,6 @@ let productList = productsDB.productList;
 
 
 router.post('/', (req, res) => {
-  console.log(req.body);
   let productObj = req.body;
 
   if(productObj.name && productObj.price && productObj.inventory){
@@ -21,7 +20,7 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-
+  console.log(req.body);
   let requestId = parseInt(req.params.id);
 
   let productToEdit = productsDB.findProductById(requestId);
@@ -60,11 +59,22 @@ router.get('/:id', (req, res) => {
   res.render('./products/product', productsDB.data.products[i]);
 });
 
+// router.post('/:id', (req, res) => {
+//   let requestId = parseInt(req.params.id);
+
+//   let productToEdit = productsDB.findProductById(requestId);
+//   if(productToEdit !== undefined){
+//     productsDB.editProduct(productToEdit, req);
+//     res.redirect(303, `/products/${productToEdit.id}`);
+//   }
+// });
+
 router.get('/:id/edit', (req, res) => {
   let requestId = parseInt(req.params.id);
   let productRequested = productsDB.findProductById(requestId);
   let i = productList.indexOf(productRequested);
   res.render('./products/edit', productsDB.data.products[i]);
 });
+
 
 module.exports = router;

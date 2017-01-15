@@ -1,13 +1,14 @@
 <h1>Edit Product #{{id}}</h1>
-<form action="/" method="POST">
-  <label for="productName">Name</label>
-  <input type="text" id="productName" value={{name}}>
+<form name="editProduct" id="editProduct" action="/products/{{id}}" method="POST">
+  <label for="name">Name</label>
+  <input type="text" id="name" name= "name" value={{name}}>
 
-  <label for="productPrice">Price</label>
-  <input type="text" id="productPrice" value={{price}}>
+  <label for="price">Price</label>
+  <input type="text" id="price" name= "price" value={{price}}>
 
-  <label for="productInventory">Inventory</label>
-  <input type="text" id="productInventory" value={{inventory}}>
+  <label for="inventory">Inventory</label>
+  <input type="text" id="inventory" name="inventory" value={{inventory}}>
 
-  <input type="submit" value="Save">
+  <input type="hidden" name="_method" value="PUT">
+  <input id= "editProduct" type="submit" value="Save Changes">
 </form>
