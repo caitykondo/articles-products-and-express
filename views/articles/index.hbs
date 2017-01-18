@@ -1,0 +1,13 @@
+<h1>All Products</h1>
+{{#if success.delete}}
+<p>Item deleted.</p>
+{{/if}}
+
+{{#each articles}} {{!-- iterates over the array of books --}}
+  <div class="article">
+    <h1>Title: {{title}}</h1>
+    <h2>Body: {{body}}</h2>
+    <h2>Author: ${{author}}</h2>
+    <h2>URL: {{URLTitle}}</h2>
+  </div>
+{{/each}}

@@ -7,7 +7,6 @@ router.post('/', (req, res) => {
 
   if(articleObj.title && articleObj.body && articleObj.author){
     articlesDB.addNewArticle(articleObj);
-    res.send(articlesDB.articleList);
     res.redirect(303, '/articles');
   }else{
     res.redirect(303, '/articles/new');
@@ -15,22 +14,17 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:title', (req, res) => {
-  let requestTitle = req.params.title;
+  articlesDB.editArticle(req);
+  res.redirect(303, `/articles/${req.urlTitle}`);  
+});
 
-  for(let i = 0; i < articlesDB.articleList.length; i++){
-    if (requestTitle === articlesDB.articleList[i].title){
-      if(req.body.title){
-        articlesDB.articleList[i].title = req.body.title;
-      }
-      if(req.body.body){
-        articlesDB.articleList[i].body = req.body.body;
-      }
-      if(req.body.author){
-        articlesDB.articleList[i].author = req.body.author;
-      }
-    }
-  }
-  res.send('yas');  
+router.delete('/:title', (req, res) => {
+  articlesDB.deleteArticle(req);
+  res.redirect(303, '/');
+});
+
+router.get('/', (req, res)=> {
+  res.render('./articles/index', articlesDB.data);
 });
 
 module.exports = router;
