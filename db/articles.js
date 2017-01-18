@@ -29,6 +29,14 @@ function deleteArticle(req){
   }
 }
 
+function findArticleByTitle(requestTitle){
+  for(let i = 0; i < articleList.length; i++){
+    if(articleList[i].title === requestTitle){
+       return articleList[i];
+    }
+  }
+}
+
 module.exports = {
   data: {
     "articles": articleList

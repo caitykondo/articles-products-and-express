@@ -27,4 +27,8 @@ router.get('/', (req, res)=> {
   res.render('./articles/index', articlesDB.data);
 });
 
+router.get('/:title', (req, res) => {
+
+});
+
 module.exports = router;
