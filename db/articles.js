@@ -44,5 +44,6 @@ module.exports = {
   articleList,
   addNewArticle,
   editArticle,
-  deleteArticle
+  deleteArticle,
+  findArticleByTitle
 };
