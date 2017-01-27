@@ -52,7 +52,7 @@ function updateProductQuery(product, requestId){
   if (product.inventory){
     query += `, inventory = '${product.inventory}'`;
   }
-  return `UPDATE products SET ${query} WHERE id = ${requestId};`;
+  return `UPDATE products SET ${query} WHERE id = ${requestId} RETURNING *;`;
 }
 
 router.route('/:id')
@@ -79,16 +79,6 @@ router.route('/:id')
     .catch(err => {
       res.redirect(303, '/products');
     });
-
-    // UPDATE ONLY product SET name = newName;
-    // let productToEdit = productsDB.findProductById(requestId);
-
-    // if(productToEdit !== undefined){
-    //   productsDB.editProduct(productToEdit, req);
-    //   res.redirect(303, `/products/${productToEdit.id}`);
-    // }else {
-    //   res.redirect(303, '/products/new');
-    // }
   })
   .delete((req, res) => {
     let requestId = parseInt(req.params.id);
