@@ -55,6 +55,11 @@ function updateProductQuery(product, requestId){
   return `UPDATE products SET ${query} WHERE id = ${requestId} RETURNING *;`;
 }
 
+router.route('/new')
+  .get((req, res) => {
+    res.render('./products/new');
+  });
+
 router.route('/:id')
   .get((req, res) => {
     let requestId = parseInt(req.params.id);
@@ -106,11 +111,6 @@ router.route('/:id/edit')
     .catch(err => {
       res.redirect(303, `/products/${requestId}`);
     });
-  });
-
-router.route('/new')
-  .get((req, res) => {
-    res.render('./products/new', productsDB.data);
   });
 
 
