@@ -1,17 +1,45 @@
 const express = require('express');
-const articlesDB = require('../db/articles');
+const db = require('./../db.js');
 let router = express.Router();
 
-router.post('/', (req, res) => {
-  let articleObj = req.body;
+router.route('/')
+  .get((req, res)=> {
+    db.any('SELECT * FROM articles')
+    .then(articles => {
+      console.log(articles);
+      res.render('./articles/index', {articles});
+    })
+    .catch(err =>{
+      res.render('./articles/error');
+    });
+  })
+  .post((req, res) => {
+    let articleObj = req.body;
+    articleObj.url_title = encodeURIComponent(articleObj.title);
+    console.log(articleObj.url_title);
+    let query = `INSERT INTO articles( title, body, author, url_title) VALUES ('${articleObj.title}', '${articleObj.body}', '${articleObj.author}', '${articleObj.url_title}');`;
+    console.log(query);
+    if(articleObj.title && articleObj.body && articleObj.author && articleObj.url_title){
+      db.none(query)
+      .then(result => {
+        res.redirect('/articles');
+      })
+      .catch(err => {
+        res.send('One of your values is invalid!');
+      });
+    }else{
+      res.redirect('/articles/new');
+    }
 
-  if(articleObj.title && articleObj.body && articleObj.author){
-    articlesDB.addNewArticle(articleObj);
-    res.redirect(303, '/articles');
-  }else{
-    res.redirect(303, '/articles/new');
-  }
-});
+    // let articleObj = req.body;
+
+    // if(articleObj.title && articleObj.body && articleObj.author){
+    //   articlesDB.addNewArticle(articleObj);
+    //   res.redirect(303, '/articles');
+    // }else{
+    //   res.redirect(303, '/articles/new');
+    // }
+  });
 
 router.put('/:title', (req, res) => {
   articlesDB.editArticle(req);
@@ -21,10 +49,6 @@ router.put('/:title', (req, res) => {
 router.delete('/:title', (req, res) => {
   articlesDB.deleteArticle(req);
   res.redirect(303, '/');
-});
-
-router.get('/', (req, res)=> {
-  res.render('./articles/index', articlesDB.data);
 });
 
 router.get('/new', (req, res) => {

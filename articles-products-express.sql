@@ -10,3 +10,11 @@ CREATE TABLE "products" (
   price integer,
   inventory integer
 );
+
+CREATE TABLE "articles" (
+  id serial PRIMARY KEY,
+  title text,
+  body text,
+  author text,
+  url_title text
+);
