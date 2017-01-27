@@ -3,26 +3,49 @@ const productsDB = require('../db/products');
 let router = express.Router();
 let productList = productsDB.productList;
 
+const pgp = require('pg-promise')();
+const PG_PASS = process.env.PG_PASS;
 
-db.one('SELECT 1 + 1 as answer')
+const db = pgp({
+  host: 'localhost',
+  port: 5432,
+  database: 'articles_products_express',
+  user: 'admin',
+  password: PG_PASS
+});
+
+db.any('SELECT * FROM products')
 .then( result => {
-  console.log('result', result.answer);
+  console.log('result', result);
 })
 .catch(err => console.log(err));
 
 
 router.post('/', (req, res) => {
   let productObj = req.body;
-
+  console.log(productObj);
+  let cmd = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
+  console.log(cmd);
+  db.none(cmd)
+    .then(result => {
+      console.log(result);
+    })
+    .catch(err => {
+      console.log('nope');
+    });
   if(productObj.name && productObj.price && productObj.inventory){
-    productsDB.addNewProduct(productObj);
-    productsDB.data.success.post = true;
-    res.redirect('/products');
+  //   productsDB.addNewProduct(productObj);
+  //   productsDB.data.success.post = true;
+  //   res.redirect('/products');
   }else{
-    res.redirect('/products/new');
-    productsDB.data.success.post = false;
+  //   res.redirect('/products/new');
+  //   productsDB.data.success.post = false;
   }
-});
+  })
+  .get('/', (req, res) => {
+    res.render('./products/index', productsDB.data);
+    // productsDB.data.success.delete = false;
+  });
 
 router.put('/:id', (req, res) => {
   let requestId = parseInt(req.params.id);
@@ -49,10 +72,6 @@ router.delete('/:id', (req, res) => {
 });
 
 
-router.get('/', (req, res) => {
-  res.render('./products/index', productsDB.data);
-  // productsDB.data.success.delete = false;
-});
 
 router.get('/new', (req, res) => {
   res.render('./products/new', productsDB.data);
