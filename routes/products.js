@@ -84,8 +84,8 @@ router.route('/:id')
   .delete((req, res) => {
     let requestId = parseInt(req.params.id);
     let query = `DELETE FROM products WHERE id = ${requestId};`
-    console.log(query);
-    db.one(query)
+
+    db.any(query)
     .then(product => {
       res.redirect('/products');
     })
@@ -94,22 +94,25 @@ router.route('/:id')
     });
   });
 
+router.route('/:id/edit')
+  .get((req, res) => {
+    let requestId = parseInt(req.params.id);
+    let query = `SELECT * FROM products WHERE id = ${requestId}`;
 
+    db.one(query)
+    .then(product => {
+      res.render('./products/edit', product);
+    })
+    .catch(err => {
+      res.redirect(303, `/products/${requestId}`);
+    });
+  });
 
-router.get('/new', (req, res) => {
-  res.render('./products/new', productsDB.data);
-});
+router.route('/new')
+  .get((req, res) => {
+    res.render('./products/new', productsDB.data);
+  });
 
-router.get('/:id/edit', (req, res) => {
-  let requestId = parseInt(req.params.id);
-  let productRequested = productsDB.findProductById(requestId);
-  if(productRequested){
-    let i = productList.indexOf(productRequested);
-    res.render('./products/edit', productsDB.data.products[i]);
-  }else{
-    res.redirect(303, '/products/error');
-  }
-});
 
 
 module.exports = router;
