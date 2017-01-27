@@ -41,45 +41,46 @@ router.route('/')
     }
   });
 
-router.put('/:id', (req, res) => {
-  let requestId = parseInt(req.params.id);
-  let productToEdit = productsDB.findProductById(requestId);
+router.route('/:id')
+  .get((req, res) => {
+    let requestId = parseInt(req.params.id);
+    let query = `SELECT * FROM products WHERE id = ${requestId}`;
 
-  if(productToEdit !== undefined){
-    productsDB.editProduct(productToEdit, req);
-    res.redirect(303, `/products/${productToEdit.id}`);
-  }else {
-    res.redirect(303, '/products/new');
-  }
-});
+    db.one(query)
+    .then(product => {
+      res.render('./products/product', product);
+    })
+    .catch(err => {
+      res.redirect(303, '/products/error');
+    });
+  })
+  .put((req, res) => {
+    let requestId = parseInt(req.params.id);
+    let productToEdit = productsDB.findProductById(requestId);
 
-router.delete('/:id', (req, res) => {
-  let requestId = parseInt(req.params.id);
-  let productToEdit = productsDB.findProductById(requestId);
-  if(productToEdit){
-    productsDB.deleteProduct(requestId);
-    productsDB.data.success.delete = true;
-    res.redirect(303,'/products');
-  }else{
-    res.redirect(303,'/products/error');
-  }
-});
+    if(productToEdit !== undefined){
+      productsDB.editProduct(productToEdit, req);
+      res.redirect(303, `/products/${productToEdit.id}`);
+    }else {
+      res.redirect(303, '/products/new');
+    }
+  })
+  .delete((req, res) => {
+    let requestId = parseInt(req.params.id);
+    let productToEdit = productsDB.findProductById(requestId);
+    if(productToEdit){
+      productsDB.deleteProduct(requestId);
+      productsDB.data.success.delete = true;
+      res.redirect(303,'/products');
+    }else{
+      res.redirect(303,'/products/error');
+    }
+  });
 
 
 
 router.get('/new', (req, res) => {
   res.render('./products/new', productsDB.data);
-});
-
-router.get('/:id', (req, res) => {
-  let requestId = parseInt(req.params.id);
-  let productRequested = productsDB.findProductById(requestId);
-  if(productRequested){
-    let i = productList.indexOf(productRequested);
-    res.render('./products/product', productsDB.data.products[i]);
-  }else{
-    res.redirect(303, '/products/error');
-  }
 });
 
 router.get('/:id/edit', (req, res) => {
