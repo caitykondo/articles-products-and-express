@@ -1,18 +1,6 @@
 const express = require('express');
-const productsDB = require('../db/products');
+const db = require('./../db.js');
 let router = express.Router();
-let productList = productsDB.productList;
-
-const pgp = require('pg-promise')();
-const PG_PASS = process.env.PG_PASS;
-
-const db = pgp({
-  host: 'localhost',
-  port: 5432,
-  database: 'articles_products_express',
-  user: 'admin',
-  password: PG_PASS
-});
 
 router.route('/')
   .get((req, res) => {
@@ -92,7 +80,7 @@ router.route('/:id')
 
     db.any(query)
     .then(product => {
-      res.redirect('/products');
+      res.redirect(303, '/products');
     })
     .catch(err => {
       res.redirect(303, `/products/${requestId}`);
