@@ -4,6 +4,13 @@ let router = express.Router();
 let productList = productsDB.productList;
 
 
+db.one('SELECT 1 + 1 as answer')
+.then( result => {
+  console.log('result', result.answer);
+})
+.catch(err => console.log(err));
+
+
 router.post('/', (req, res) => {
   let productObj = req.body;
 
