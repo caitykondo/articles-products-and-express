@@ -14,37 +14,31 @@ const db = pgp({
   password: PG_PASS
 });
 
-db.any('SELECT * FROM products')
-.then( result => {
-  console.log('result', result);
-})
-.catch(err => console.log(err));
-
-
-router.post('/', (req, res) => {
-  let productObj = req.body;
-  console.log(productObj);
-  let cmd = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
-  console.log(cmd);
-  db.none(cmd)
-    .then(result => {
-      console.log(result);
+router.route('/')
+  .get((req, res) => {
+    db.any('SELECT * FROM products')
+    .then( products => {
+      res.render('./products/index', {products});
     })
-    .catch(err => {
-      console.log('nope');
+    .catch(err =>{
+      res.render('./products/error');
     });
-  if(productObj.name && productObj.price && productObj.inventory){
-  //   productsDB.addNewProduct(productObj);
-  //   productsDB.data.success.post = true;
-  //   res.redirect('/products');
-  }else{
-  //   res.redirect('/products/new');
-  //   productsDB.data.success.post = false;
-  }
   })
-  .get('/', (req, res) => {
-    res.render('./products/index', productsDB.data);
-    // productsDB.data.success.delete = false;
+  .post( (req, res) => {
+    let productObj = req.body;
+    let query = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
+
+    if(productObj.name && productObj.price && productObj.inventory){
+      db.none(query)
+      .then(result => {
+        res.redirect('/products');
+      })
+      .catch(err => {
+        res.send('One of your values is invalid!');
+      });
+    }else{
+      res.redirect('/products/new');
+    }
   });
 
 router.put('/:id', (req, res) => {
