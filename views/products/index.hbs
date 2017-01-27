@@ -1,9 +1,6 @@
 <h1>All Products</h1>
-{{#if success.delete}}
-<p>Item deleted.</p>
-{{/if}}
 
-{{#each products}} {{!-- iterates over the array of books --}}
+{{#each products}}
   <div class="product">
     <h1>Name: {{name}}</h1>
     <h2>ID: {{id}}</h2>

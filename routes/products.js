@@ -102,7 +102,7 @@ router.route('/:id')
 router.route('/:id/edit')
   .get((req, res) => {
     let requestId = parseInt(req.params.id);
-    let query = `SELECT * FROM products WHERE id = ${requestId}`;
+    let query = `SELECT * FROM products WHERE id = ${requestId};`;
 
     db.one(query)
     .then(product => {
