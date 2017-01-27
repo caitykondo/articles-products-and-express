@@ -41,6 +41,20 @@ router.route('/')
     }
   });
 
+function updateProductQuery(product, requestId){
+  let query = '';
+  if (product.name){
+    query += `name = '${product.name}'`;
+  }
+  if (product.price){
+    query += `, price = '${product.price}'`;
+  }
+  if (product.inventory){
+    query += `, inventory = '${product.inventory}'`;
+  }
+  return `UPDATE products SET ${query} WHERE id = ${requestId};`;
+}
+
 router.route('/:id')
   .get((req, res) => {
     let requestId = parseInt(req.params.id);
@@ -51,19 +65,30 @@ router.route('/:id')
       res.render('./products/product', product);
     })
     .catch(err => {
-      res.redirect(303, '/products/error');
+      res.redirect(303, '/products');
     });
   })
   .put((req, res) => {
     let requestId = parseInt(req.params.id);
-    let productToEdit = productsDB.findProductById(requestId);
+    let query = updateProductQuery(req.body, requestId);
 
-    if(productToEdit !== undefined){
-      productsDB.editProduct(productToEdit, req);
-      res.redirect(303, `/products/${productToEdit.id}`);
-    }else {
-      res.redirect(303, '/products/new');
-    }
+    db.one(query)
+    .then(product => {
+      res.render('./products/product', product);
+    })
+    .catch(err => {
+      res.redirect(303, '/products');
+    });
+
+    // UPDATE ONLY product SET name = newName;
+    // let productToEdit = productsDB.findProductById(requestId);
+
+    // if(productToEdit !== undefined){
+    //   productsDB.editProduct(productToEdit, req);
+    //   res.redirect(303, `/products/${productToEdit.id}`);
+    // }else {
+    //   res.redirect(303, '/products/new');
+    // }
   })
   .delete((req, res) => {
     let requestId = parseInt(req.params.id);
