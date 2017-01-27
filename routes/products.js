@@ -65,6 +65,7 @@ router.route('/:id')
       res.render('./products/product', product);
     })
     .catch(err => {
+      // doesnt exist
       res.redirect(303, '/products');
     });
   })
@@ -77,19 +78,20 @@ router.route('/:id')
       res.render('./products/product', product);
     })
     .catch(err => {
-      res.redirect(303, '/products');
+      res.redirect(303, '/products/edit', product);
     });
   })
   .delete((req, res) => {
     let requestId = parseInt(req.params.id);
-    let productToEdit = productsDB.findProductById(requestId);
-    if(productToEdit){
-      productsDB.deleteProduct(requestId);
-      productsDB.data.success.delete = true;
-      res.redirect(303,'/products');
-    }else{
-      res.redirect(303,'/products/error');
-    }
+    let query = `DELETE FROM products WHERE id = ${requestId};`
+    console.log(query);
+    db.one(query)
+    .then(product => {
+      res.redirect('/products');
+    })
+    .catch(err => {
+      res.redirect(303, `/products/${requestId}`);
+    });
   });
 
 
