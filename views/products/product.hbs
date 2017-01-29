@@ -1,10 +1,11 @@
-{{#if id}}
+{{#unless error}}
 <div class="product">
   <h1>Name: {{name}}</h1>
   <h2>ID : {{id}}</h2>
   <h2>Price: ${{price}}</h2>
   <h2>Inventory: {{inventory}}</h2>
 </div>
-{{else}}
+{{/unless}}
+{{#if error}}
   <h1>Product Not Found</h1>
 {{/if}}

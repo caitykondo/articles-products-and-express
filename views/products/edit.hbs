@@ -1,3 +1,4 @@
+{{#unless error}}
 <h1>Edit Product #{{id}}</h1>
 <form name="editProduct" id="editProduct" action="/products/{{id}}" method="POST">
   <label for="name">Name</label>
@@ -12,3 +13,8 @@
   <input type="hidden" name="_method" value="PUT">
   <input id= "editProduct" type="submit" value="Save Changes">
 </form>
+{{/unless}}
+
+{{#if error}}
+<p>Could not update product.</p>
+{{/if}}

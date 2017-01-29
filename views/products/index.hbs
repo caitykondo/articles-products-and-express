@@ -1,4 +1,10 @@
 <h1>All Products</h1>
+{{#if error}}
+<h1>Something went wrong :(</h1>
+{{/if}}
+{{#if delete_error}}
+<h1> Product could not be deleted.</h1>
+{{/if}}
 
 {{#each products}}
   <div class="product">

@@ -6,11 +6,10 @@ router.route('/')
   .get((req, res) => {
     db.any('SELECT * FROM products')
     .then( products => {
-      res.render('./products/index', {products});
+      res.render('./products/', {products});
     })
     .catch(err =>{
-      res.send('error');
-      // res.render('./products/error');
+      res.render('./products/', {error: true});
     });
   })
   .post( (req, res) => {
@@ -58,8 +57,7 @@ router.route('/:id')
       res.render('./products/product', product);
     })
     .catch(err => {
-      // doesnt exist
-      res.redirect(303, '/products');
+      res.render('./products/product', {error: true});
     });
   })
   .put((req, res) => {
@@ -71,7 +69,7 @@ router.route('/:id')
       res.render('./products/product', product);
     })
     .catch(err => {
-      res.redirect(303, '/products/edit', product);
+      res.render('./products/edit', {error: true});
     });
   })
   .delete((req, res) => {
@@ -83,7 +81,7 @@ router.route('/:id')
       res.redirect(303, '/products');
     })
     .catch(err => {
-      res.redirect(303, `/products/${requestId}`);
+      res.render('./products', {delete_error: true});
     });
   });
 
