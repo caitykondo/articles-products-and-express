@@ -2,9 +2,30 @@ const express = require('express');
 const db = require('./../db.js');
 let router = express.Router();
 
+let articleQueries = {
+  getIndex: 'SELECT * FROM articles',
+  postIndex: (req) => `INSERT INTO articles (title, body, author, url_title) VALUES ('${req.body.title}', '${req.body.body}', '${req.body.author}', '${req.body.url_title}');`,
+  getTitle: (req) => `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`,
+  putTitle: (req) => {
+    let article = req.body;
+    let url = encodeURIComponent(req.params.title);
+    let query = '';
+    if (article.title){
+      query += `title = '${article.title}'`;
+    }
+    if (article.body){
+      query += `, body = '${article.body}'`;
+    }
+    if (article.author){
+      query += `, author = '${article.author}'`;
+    }
+    return `UPDATE articles SET ${query} WHERE url_title LIKE '${url}' RETURNING *;`;
+  }
+}
+
 router.route('/')
   .get((req, res)=> {
-    db.any('SELECT * FROM articles')
+    db.any(articleQueries.getIndex)
     .then(articles => {
       res.render('./articles/', {articles});
     })
@@ -13,11 +34,9 @@ router.route('/')
     });
   })
   .post((req, res) => {
-    let articleObj = req.body;
-    articleObj.url_title = encodeURIComponent(articleObj.title);
-    let query = `INSERT INTO articles (title, body, author, url_title) VALUES ('${articleObj.title}', '${articleObj.body}', '${articleObj.author}', '${articleObj.url_title}');`;
-    if(articleObj.title && articleObj.body && articleObj.author){
-      db.none(query)
+    req.body.url_title = encodeURIComponent(req.body.title);
+    if(req.body.title && req.body.body && req.body.author){
+      db.none(articleQueries.postIndex(req))
       .then(result => {
         res.redirect(303, '/articles');
       })
@@ -34,25 +53,9 @@ router.route('/new')
   res.render('./articles/new');
 });
 
-function updateArticleQuery (article, url){
-  let query = '';
-  if (article.title){
-    query += `title = '${article.title}'`;
-  }
-  if (article.body){
-    query += `, bodyp = '${article.body}'`;
-  }
-  if (article.author){
-    query += `, author = '${article.author}'`;
-  }
-  return `UPDATE articles SET ${query} WHERE url_title LIKE '${url}' RETURNING *;`;
-}
-
 router.route('/:title')
   .get((req, res) => {
-    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
-
-    db.one(query)
+    db.one(articleQueries.getTitle(req))
     .then(article => {
       res.render('./articles/article', article);
     })
@@ -61,14 +64,12 @@ router.route('/:title')
     })
   })
   .put((req, res) => {
-    let query = updateArticleQuery(req.body, encodeURIComponent(req.params.title));
-
-    db.one(query)
+    db.one(articleQueries.putTitle(req))
     .then(article => {
       res.render('./articles/article', article);
     })
     .catch(err => {
-      res.render('.articles/article', {error: true});  
+      res.send(err);  
     })
   })
   .delete((req, res) => {
