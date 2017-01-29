@@ -22,11 +22,10 @@ router.route('/')
         res.redirect('/products');
       })
       .catch(err => {
-        console.log(err);
-        res.send('One of your values is invalid!');
+        res.render('./products/new', {post_err: true});
       });
     }else{
-      res.redirect('/products/new');
+      res.render('./products/new', {incomplete_err: true});
     }
   });
 
