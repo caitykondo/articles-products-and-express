@@ -6,10 +6,10 @@ router.route('/')
   .get((req, res)=> {
     db.any('SELECT * FROM articles')
     .then(articles => {
-      res.render('./articles/index', {articles});
+      res.render('./articles/', {articles});
     })
     .catch(err =>{
-      res.send('./articles/error');
+      res.render('./articles/', {error: true});
     });
   })
   .post((req, res) => {
@@ -22,10 +22,10 @@ router.route('/')
         res.redirect(303, '/articles');
       })
       .catch(err => {
-        res.send('/articles/new');
+        res.render('./articles/new', {post_error: true});
       });
     }else{
-      res.redirect('/articles/new');
+      res.render('./articles/new', {incomplete_error: true});
     }
   });
 
@@ -33,7 +33,6 @@ router.route('/new')
 .get((req, res) => {
   res.render('./articles/new');
 });
-
 
 function updateArticleQuery (article, url){
   let query = '';
@@ -49,18 +48,16 @@ function updateArticleQuery (article, url){
   return `UPDATE articles SET ${query} WHERE url_title LIKE '${url}' RETURNING *;`;
 }
 
-
-
 router.route('/:title')
   .get((req, res) => {
-    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`
-
+    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
+    console.log(query);
     db.one(query)
     .then(article => {
       res.render('./articles/article', article);
     })
     .catch(err =>{
-      res.redirect('/articles/new');
+      res.render('./articles/article', {error: true});
     })
   })
   .put((req, res) => {
