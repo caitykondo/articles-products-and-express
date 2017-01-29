@@ -1,5 +1,6 @@
-const express = require('express');
+
 const db = require('./../db');
+const express = require('express');
 const articleQueries = require('./../articleQueries')
 let router = express.Router();
 
@@ -16,7 +17,7 @@ router.route('/')
   .post((req, res) => {
     req.body.url_title = encodeURIComponent(req.body.title);
     if(req.body.title && req.body.body && req.body.author){
-      db.none(articleQueries.postIndex(req))
+      articleQueries.postIndex(req.body)
       .then(result => {
         res.redirect(303, '/articles');
       })

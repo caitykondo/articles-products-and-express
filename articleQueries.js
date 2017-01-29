@@ -1,6 +1,8 @@
+const db = require('./db');
+
 let articleQueries = {
   getIndex: 'SELECT * FROM articles',
-  postIndex: (req) => `INSERT INTO articles (title, body, author, url_title) VALUES ('${req.body.title}', '${req.body.body}', '${req.body.author}', '${req.body.url_title}');`,
+  postIndex: (article) => db.none(`INSERT INTO articles (title, body, author, url_title) VALUES ('${article.title}', '${article.body}', '${article.author}', '${article.url_title}');`),
   getTitle: (req) => `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`,
   putTitle: (req) => {
     let article = req.body;
