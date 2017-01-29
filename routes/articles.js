@@ -6,64 +6,56 @@ router.route('/')
   .get((req, res)=> {
     db.any('SELECT * FROM articles')
     .then(articles => {
-      console.log(articles);
       res.render('./articles/index', {articles});
     })
     .catch(err =>{
-      res.render('./articles/error');
+      res.send('./articles/error');
     });
   })
   .post((req, res) => {
     let articleObj = req.body;
     articleObj.url_title = encodeURIComponent(articleObj.title);
-    console.log(articleObj.url_title);
-    let query = `INSERT INTO articles( title, body, author, url_title) VALUES ('${articleObj.title}', '${articleObj.body}', '${articleObj.author}', '${articleObj.url_title}');`;
-    console.log(query);
-    if(articleObj.title && articleObj.body && articleObj.author && articleObj.url_title){
+    let query = `INSERT INTO articles (title, body, author, url_title) VALUES ('${articleObj.title}', '${articleObj.body}', '${articleObj.author}', '${articleObj.url_title}');`;
+    if(articleObj.title && articleObj.body && articleObj.author){
       db.none(query)
       .then(result => {
-        res.redirect('/articles');
+        res.redirect(303, '/articles');
       })
       .catch(err => {
-        res.send('One of your values is invalid!');
+        res.send('broken');
       });
     }else{
       res.redirect('/articles/new');
     }
-
-    // let articleObj = req.body;
-
-    // if(articleObj.title && articleObj.body && articleObj.author){
-    //   articlesDB.addNewArticle(articleObj);
-    //   res.redirect(303, '/articles');
-    // }else{
-    //   res.redirect(303, '/articles/new');
-    // }
   });
 
-router.put('/:title', (req, res) => {
-  articlesDB.editArticle(req);
-  res.redirect(303, `/articles/${req.urlTitle}`);  
+router.route('/new')
+.get((req, res) => {
+  res.render('./articles/new');
 });
 
-router.delete('/:title', (req, res) => {
-  articlesDB.deleteArticle(req);
-  res.redirect(303, '/');
-});
+router.route('/:title')
+  .get((req, res) => {
+    let query = `SELECT * FROM articles WHERE title LIKE '${req.params.title}';`
+    console.log(query);
+    db.one(query)
+      .then(article => {
+        res.render('./articles/article', article);
+      })
+      .catch(err =>{
+        res.redirect('/articles/new');
+      })
+  })
+  .put((req, res) => {
+    articlesDB.editArticle(req);
+    res.redirect(303, `/articles/${req.urlTitle}`);  
+  })
+  .delete((req, res) => {
+    articlesDB.deleteArticle(req);
+    res.redirect(303, '/');
+  });
 
-router.get('/new', (req, res) => {
-  res.render('./articles/new', articlesDB.data);
-});
 
-router.get('/:title', (req, res) => {
-  let articleRequested = articlesDB.findArticleByTitle(req.params.title);
-  if(articleRequested){
-    let i = articlesDB.articleList.indexOf(articleRequested);
-    res.render('./articles/article', articlesDB.data.articles[i]);
-  }else{
-    res.redirect(303, '/articles/error');
-  }
-});
 
 router.get('/:title/edit', (req, res) => {
   let articleRequested = articlesDB.findArticleByTitle(req.params.title);

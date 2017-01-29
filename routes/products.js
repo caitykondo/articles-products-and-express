@@ -9,19 +9,20 @@ router.route('/')
       res.render('./products/index', {products});
     })
     .catch(err =>{
-      res.render('./products/error');
+      res.send('error');
+      // res.render('./products/error');
     });
   })
   .post( (req, res) => {
     let productObj = req.body;
     let query = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
-
     if(productObj.name && productObj.price && productObj.inventory){
       db.none(query)
       .then(result => {
         res.redirect('/products');
       })
       .catch(err => {
+        console.log(err);
         res.send('One of your values is invalid!');
       });
     }else{
