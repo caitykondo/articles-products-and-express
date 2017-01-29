@@ -1,6 +1,10 @@
 <h1>All Articles</h1>
-{{#if success.delete}}
-<p>Item deleted.</p>
+
+{{#if error}}
+  <h1>Something went wrong :(</h1>
+{{/if}}
+{{#if delete_error}}
+  <h1> Product could not be deleted.</h1>
 {{/if}}
 
 {{#each articles}}
@@ -8,6 +12,6 @@
     <h1>Title: {{title}}</h1>
     <h2>Body: {{body}}</h2>
     <h2>Author: {{author}}</h2>
-    <h2>URL: {{url_title}}</h2>
+    <h2>URL: articles/{{url_title}}</h2>
   </div>
 {{/each}}

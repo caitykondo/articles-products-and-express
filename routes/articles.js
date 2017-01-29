@@ -51,7 +51,7 @@ function updateArticleQuery (article, url){
 router.route('/:title')
   .get((req, res) => {
     let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
-    console.log(query);
+
     db.one(query)
     .then(article => {
       res.render('./articles/article', article);
@@ -68,7 +68,7 @@ router.route('/:title')
       res.render('./articles/article', article);
     })
     .catch(err => {
-      res.send(`/articles/${req.params.title}/edit`);  
+      res.render('.articles/article', {error: true});  
     })
   })
   .delete((req, res) => {
@@ -79,13 +79,13 @@ router.route('/:title')
       res.redirect(303, '/articles');
     })
     .catch(err => {
-      res.send('error');
+      res.render('./articles', {delete_error: true});
     })
   });
 
 router.route('/:title/edit')
   .get((req, res) => {
-    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`
+    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
 
     db.one(query)
     .then(article => {

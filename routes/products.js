@@ -21,10 +21,10 @@ router.route('/')
         res.redirect('/products');
       })
       .catch(err => {
-        res.render('./products/new', {post_err: true});
+        res.render('./products/new', {post_error: true});
       });
     }else{
-      res.render('./products/new', {incomplete_err: true});
+      res.render('./products/new', {incomplete_error: true});
     }
   });
 
@@ -76,7 +76,7 @@ router.route('/:id')
     let requestId = parseInt(req.params.id);
     let query = `DELETE FROM products WHERE id = ${requestId};`
 
-    db.any(query)
+    db.none(query)
     .then(product => {
       res.redirect(303, '/products');
     })
