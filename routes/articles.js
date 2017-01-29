@@ -86,16 +86,18 @@ router.route('/:title')
     })
   });
 
+router.route('/:title/edit')
+  .get((req, res) => {
+    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`
 
-
-router.get('/:title/edit', (req, res) => {
-  // let articleRequested = articlesDB.findArticleByTitle(req.params.title);
-  // if(articleRequested){
-  //   let i = articlesDB.articleList.indexOf(articleRequested);
-  //   res.render('./articles/edit', articlesDB.data.articles[i]);
-  // }else{
-  //   res.redirect(303, '/articles/error');
-  // }
-});
+    db.one(query)
+    .then(article => {
+      res.render('./articles/edit', article);
+    })
+    .catch(err => {
+      console.log(err);
+      res.redirect(303, `/articles/${encodeURIComponent(req.params.title)}`)
+    })
+  });
 
 module.exports = router;
