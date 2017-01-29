@@ -41,7 +41,7 @@ function updateArticleQuery (article, url){
     query += `title = '${article.title}'`;
   }
   if (article.body){
-    query += `, body = '${article.body}'`;
+    query += `, bodyp = '${article.body}'`;
   }
   if (article.author){
     query += `, author = '${article.author}'`;
@@ -54,7 +54,7 @@ function updateArticleQuery (article, url){
 router.route('/:title')
   .get((req, res) => {
     let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`
-    console.log(query);
+
     db.one(query)
     .then(article => {
       res.render('./articles/article', article);
@@ -66,19 +66,24 @@ router.route('/:title')
   .put((req, res) => {
     let query = updateArticleQuery(req.body, encodeURIComponent(req.params.title));
 
-    console.log(query);
     db.one(query)
     .then(article => {
       res.render('./articles/article', article);
     })
     .catch(err => {
-      console.log(err);
       res.send(`/articles/${req.params.title}/edit`);  
     })
   })
   .delete((req, res) => {
-    articlesDB.deleteArticle(req);
-    res.redirect(303, '/');
+    let query = `DELETE FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`;
+
+    db.none(query)
+    .then(article => {
+      res.redirect(303, '/articles');
+    })
+    .catch(err => {
+      res.send('error');
+    })
   });
 
 
