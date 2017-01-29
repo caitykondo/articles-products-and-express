@@ -20,7 +20,9 @@ let articleQueries = {
       query += `, author = '${article.author}'`;
     }
     return `UPDATE articles SET ${query} WHERE url_title LIKE '${url}' RETURNING *;`;
-  }
+  },
+  deleteTitle: (req) => `DELETE FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`,
+  editTitle: (req) => `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
 }
 
 router.route('/')
@@ -73,9 +75,7 @@ router.route('/:title')
     })
   })
   .delete((req, res) => {
-    let query = `DELETE FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}';`;
-
-    db.none(query)
+    db.none(articleQueries.deleteTitle(req))
     .then(article => {
       res.redirect(303, '/articles');
     })
@@ -86,14 +86,11 @@ router.route('/:title')
 
 router.route('/:title/edit')
   .get((req, res) => {
-    let query = `SELECT * FROM articles WHERE url_title LIKE '${encodeURIComponent(req.params.title)}' LIMIT 1;`
-
-    db.one(query)
+    db.one(articleQueries.editTitle(req))
     .then(article => {
       res.render('./articles/edit', article);
     })
     .catch(err => {
-      console.log(err);
       res.redirect(303, `/articles/${encodeURIComponent(req.params.title)}`)
     })
   });
