@@ -53,10 +53,7 @@ router.route('/:id')
     });
   })
   .delete((req, res) => {
-    let requestId = parseInt(req.params.id);
-    let query = `DELETE FROM products WHERE id = ${requestId};`
-
-    db.none(query)
+    productQueries.deleteId(parseInt(req.params.id))
     .then(product => {
       res.redirect(303, '/products');
     })

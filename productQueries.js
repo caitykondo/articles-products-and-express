@@ -16,7 +16,8 @@ let productQueries = {
       query += `, inventory = '${product.inventory}'`;
     }
     return db.one(`UPDATE products SET ${query} WHERE id = ${id} RETURNING *;`);
-  }
+  },
+  deleteId : (id) => db.none(`DELETE FROM products WHERE id = ${id};`)
 }
 
 module.exports = productQueries;
