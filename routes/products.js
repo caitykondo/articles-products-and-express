@@ -2,9 +2,14 @@ const express = require('express');
 const db = require('./../db.js');
 let router = express.Router();
 
+let productQueries = {
+  getIndex : 'SELECT * FROM products',
+  postIndex : (req) => {`INSERT INTO products( name, price, inventory) VALUES ('${req.body.name}', ${req.body.price}, ${req.body.inventory});`}
+};
+
 router.route('/')
   .get((req, res) => {
-    db.any('SELECT * FROM products')
+    db.any(productQueries.getIndex)
     .then( products => {
       res.render('./products/', {products});
     })
@@ -13,10 +18,10 @@ router.route('/')
     });
   })
   .post( (req, res) => {
-    let productObj = req.body;
-    let query = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
-    if(productObj.name && productObj.price && productObj.inventory){
-      db.none(query)
+    // let productObj = req.body;
+    // let query = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
+    if(req.body.name && req.body.price && req.body.inventory){
+      db.none(productQueries.postIndex)
       .then(result => {
         res.redirect('/products');
       })
@@ -66,6 +71,7 @@ router.route('/:id')
 
     db.one(query)
     .then(product => {
+      console.log(product);
       res.render('./products/product', product);
     })
     .catch(err => {

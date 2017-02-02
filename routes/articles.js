@@ -1,12 +1,13 @@
-
 const db = require('./../db');
 const express = require('express');
 const articleQueries = require('./../articleQueries')
 let router = express.Router();
 
+let articleId = 1;
+
 router.route('/')
   .get((req, res)=> {
-    db.any(articleQueries.getIndex)
+    articleQueries.getIndex
     .then(articles => {
       res.render('./articles/', {articles});
     })
@@ -15,7 +16,8 @@ router.route('/')
     });
   })
   .post((req, res) => {
-    req.body.url_title = encodeURIComponent(req.body.title);
+    req.body.url_title = `${encodeURIComponent(req.body.title)}${articleId}`;
+    articleId++;
     if(req.body.title && req.body.body && req.body.author){
       articleQueries.postIndex(req.body)
       .then(result => {
@@ -30,13 +32,13 @@ router.route('/')
   });
 
 router.route('/new')
-.get((req, res) => {
-  res.render('./articles/new');
-});
+  .get((req, res) => {
+    res.render('./articles/new');
+  });
 
 router.route('/:title')
   .get((req, res) => {
-    db.one(articleQueries.getTitle(req))
+    articleQueries.getTitle(req.params.title)
     .then(article => {
       res.render('./articles/article', article);
     })
@@ -45,13 +47,14 @@ router.route('/:title')
     })
   })
   .put((req, res) => {
-    db.one(articleQueries.putTitle(req))
-    .then(article => {
-      res.render('./articles/article', article);
-    })
-    .catch(err => {
-      res.send(err);  
-    })
+    let url = encodeURIComponent(req.params.title);
+    // articleQueries.putTitle(req.body, url)
+    // .then(article => {
+    //   res.render('./articles/article', article[0]);
+    // })
+    // .catch(err => {
+    //   res.send(err);  
+    // })
   })
   .delete((req, res) => {
     db.none(articleQueries.deleteTitle(req))
