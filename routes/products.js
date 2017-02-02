@@ -1,15 +1,12 @@
 const express = require('express');
 const db = require('./../db.js');
+let productQueries = require('./../productQueries.js');
 let router = express.Router();
 
-let productQueries = {
-  getIndex : 'SELECT * FROM products',
-  postIndex : (req) => {`INSERT INTO products( name, price, inventory) VALUES ('${req.body.name}', ${req.body.price}, ${req.body.inventory});`}
-};
 
 router.route('/')
   .get((req, res) => {
-    db.any(productQueries.getIndex)
+    productQueries.getIndex
     .then( products => {
       res.render('./products/', {products});
     })
@@ -18,10 +15,8 @@ router.route('/')
     });
   })
   .post( (req, res) => {
-    // let productObj = req.body;
-    // let query = `INSERT INTO products( name, price, inventory) VALUES ('${productObj.name}', ${productObj.price}, ${productObj.inventory});`;
     if(req.body.name && req.body.price && req.body.inventory){
-      db.none(productQueries.postIndex)
+      productQueries.postIndex(req.body)
       .then(result => {
         res.redirect('/products');
       })
@@ -54,10 +49,7 @@ router.route('/new')
 
 router.route('/:id')
   .get((req, res) => {
-    let requestId = parseInt(req.params.id);
-    let query = `SELECT * FROM products WHERE id = ${requestId}`;
-
-    db.one(query)
+    productQueries.getId(parseInt(req.params.id))
     .then(product => {
       res.render('./products/product', product);
     })
