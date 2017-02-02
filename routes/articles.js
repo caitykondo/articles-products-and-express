@@ -48,13 +48,13 @@ router.route('/:title')
   })
   .put((req, res) => {
     let url = encodeURIComponent(req.params.title);
-    // articleQueries.putTitle(req.body, url)
-    // .then(article => {
-    //   res.render('./articles/article', article[0]);
-    // })
-    // .catch(err => {
-    //   res.send(err);  
-    // })
+    articleQueries.putTitle(req.body, url)
+    .then(article => {
+      res.render('./articles/article', article);
+    })
+    .catch(err => {
+      res.send(err);  
+    })
   })
   .delete((req, res) => {
     db.none(articleQueries.deleteTitle(req))
