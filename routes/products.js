@@ -28,20 +28,6 @@ router.route('/')
     }
   });
 
-function updateProductQuery(product, requestId){
-  let query = '';
-  if (product.name){
-    query += `name = '${product.name}'`;
-  }
-  if (product.price){
-    query += `, price = '${product.price}'`;
-  }
-  if (product.inventory){
-    query += `, inventory = '${product.inventory}'`;
-  }
-  return `UPDATE products SET ${query} WHERE id = ${requestId} RETURNING *;`;
-}
-
 router.route('/new')
   .get((req, res) => {
     res.render('./products/new');
@@ -58,12 +44,8 @@ router.route('/:id')
     });
   })
   .put((req, res) => {
-    let requestId = parseInt(req.params.id);
-    let query = updateProductQuery(req.body, requestId);
-
-    db.one(query)
+    productQueries.putId(req.body, parseInt(req.params.id))
     .then(product => {
-      console.log(product);
       res.render('./products/product', product);
     })
     .catch(err => {
