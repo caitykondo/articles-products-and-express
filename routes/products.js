@@ -64,15 +64,12 @@ router.route('/:id')
 
 router.route('/:id/edit')
   .get((req, res) => {
-    let requestId = parseInt(req.params.id);
-    let query = `SELECT * FROM products WHERE id = ${requestId};`;
-
-    db.one(query)
+    productQueries.editId(parseInt(req.params.id))
     .then(product => {
       res.render('./products/edit', product);
     })
     .catch(err => {
-      res.redirect(303, `/products/${requestId}`);
+      res.redirect(303, `/products/${parseInt(req.params.id)}`);
     });
   });
 
