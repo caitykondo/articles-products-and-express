@@ -53,11 +53,11 @@ router.route('/:title')
       res.render('./articles/article', article);
     })
     .catch(err => {
-      res.send(err);  
+      res.render('./articles/edit', {error: true});  
     })
   })
   .delete((req, res) => {
-    db.none(articleQueries.deleteTitle(req))
+    articleQueries.deleteTitle(req.params.title)
     .then(article => {
       res.redirect(303, '/articles');
     })
@@ -68,7 +68,7 @@ router.route('/:title')
 
 router.route('/:title/edit')
   .get((req, res) => {
-    db.one(articleQueries.editTitle(req))
+    articleQueries.editTitle(req)
     .then(article => {
       res.render('./articles/edit', article);
     })

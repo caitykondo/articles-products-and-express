@@ -1,5 +1,6 @@
+{{#unless error}}
 <h1>Edit Article #{{title}}</h1>
-<form name="editArticle" id="editArticle" action="/articles/{{urlTitle}}" method="POST">
+<form name="editArticle" id="editArticle" action="/articles/{{url_title}}" method="POST">
   <label for="title">Title</label>
   <input type="text" id="title" name= "title" value={{title}}>
 
@@ -12,3 +13,8 @@
   <input type="hidden" name="_method" value="PUT">
   <input id= "editArticle" type="submit" value="Save Changes">
 </form>
+{{/unless}}
+
+{{#if error}}
+<p>Could not update article.</p>
+{{/if}}
